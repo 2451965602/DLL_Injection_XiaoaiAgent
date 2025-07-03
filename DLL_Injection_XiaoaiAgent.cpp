@@ -32,19 +32,19 @@ bool FileExists(const std::string& filename) {
 }
 
 int main() {
-    // 定义注册表子键和值名称
-    std::string regSubKey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\XiaoaiAgent.exe";
+    // 修改为XiaomiAICreatorClient.exe的注册表路径
+    std::string regSubKey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\XiaomiAICreatorClient.exe";
     std::string regValueName = "Path";
 
-    // 获取XiaoaiAgent.exe的安装路径
+    // 获取XiaomiAICreatorClient.exe的安装路径
     std::string installPath = GetExecutablePathFromRegistry(regSubKey, regValueName);
     if (installPath.empty()) {
-        std::cerr << "Failed to get installation path from registry." << std::endl;
+        std::cerr << "Failed to get XiaomiAICreatorClient installation path from registry." << std::endl;
         return 1;
     }
 
-    // 构建XiaoaiAgent.exe的完整路径
-    std::string exePath = installPath + "\\XiaoaiAgent.exe";
+    // 构建XiaomiAICreatorClient.exe的完整路径
+    std::string exePath = installPath + "\\XiaomiAICreatorClient.exe";
 
     // 获取可执行文件所在的目录
     std::string dllDir = GetExecutableDirectory();
@@ -68,16 +68,16 @@ int main() {
 
     // 启动目标进程
     if (!CreateProcess(
-        NULL,                   // 不使用应用程序名称
-        (LPSTR)exePath.c_str(), // 命令行字符串
-        NULL,                   // 默认进程安全属性
-        NULL,                   // 默认线程安全属性
-        FALSE,                  // 不继承句柄
-        CREATE_SUSPENDED,       // 挂起线程
-        NULL,                   // 使用父进程环境块
-        NULL,                   // 使用父进程目录
-        &si,                    // STARTUPINFO 结构体
-        &pi                     // 返回PROCESS_INFORMATION 结构体
+        NULL,
+        (LPSTR)exePath.c_str(),
+        NULL,
+        NULL,
+        FALSE,
+        CREATE_SUSPENDED,
+        NULL,
+        NULL,
+        &si,
+        &pi
     )) {
         std::cerr << "CreateProcess failed (" << GetLastError() << ")." << std::endl;
         return 1;
@@ -150,14 +150,11 @@ int main() {
     // 清理资源
     CloseHandle(hThread);
     VirtualFreeEx(pi.hProcess, pRemoteMem, 0, MEM_RELEASE);
-    ResumeThread(pi.hThread); // 继续挂起的主线程
+    ResumeThread(pi.hThread);
     CloseHandle(pi.hProcess);
     CloseHandle(pi.hThread);
 
-    std::cout << "DLL injected successfully." << std::endl;
+    std::cout << "DLL injected successfully into XiaomiAICreatorClient.exe." << std::endl;
 
     return 0;
 }
-
-
-
